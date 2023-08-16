@@ -1,6 +1,6 @@
 version : "3.3"
 services :
   web :
-     image : tusharh/my-note-app:latest
+     image : tusharh/note-app:latest
      ports :
          - "8000:8000"
