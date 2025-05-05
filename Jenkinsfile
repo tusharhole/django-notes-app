@@ -1,37 +1,46 @@
+@Library ("Shared") _
 pipeline{
-    agent{label 'agent'}
-    stages{
-        stage('Project cloned'){
+    agent {label 'Advika'}
+    
+     stage("Code"){
             steps{
-                git url : 'https://github.com/tusharhole/django-notes-app.git', branch :'main'
+                echo "this is clong the code"
+              clone("https://github.com/tusharhole/django-notes-app.git", "main")
+                echo "Code Cloned Successfully"
             }
-            
         }
-        
-         stage('Project Build'){
+        stage("Build"){
             steps{
-                
-                sh 'docker build . -t tusharh/note-app:latest'
+                echo "this is biulding the code"
+                sh "whoami"
+                sh "docker build -t notes-app:latest ."
             }
-            
         }
-        
-         stage('Push to dockerhub'){
+        stage("test"){
             steps{
-                echo "pushing the iamge to dockerhub"
-                withCredentials([usernamePassword(credentialsId: 'Dockerhub', passwordVariable: 'hole', usernameVariable: 'tushar')]) {
-                    sh "docker login -u ${env.tushar} -p ${env.hole}"
-                    sh "docker push tusharh/note-app:latest"
-                    }
+                echo "this is testing the code"
             }
-            
         }
-        stage('Deploy'){
+       stage("Pushing to DockerHub") {
+    steps {
+        echo "This is Pushing the image to Docker Hub"
+        withCredentials([usernamePassword(
+            credentialsId: 'dockerHubCred',
+            usernameVariable: 'dockerHubUser',
+            passwordVariable: 'dockerHubPass'
+        )]) {
+            sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}"
+            sh "docker image tag notes-app:latest ${env.dockerHubUser}/notes-app:latest"
+            sh "docker push ${env.dockerHubUser}/notes-app:latest"
+        }
+    }
+}
+
+        stage("Deploy"){
             steps{
-                echo "Deploying the conatiner"
-                sh "docker-compose down && docker-compose up -d"
+                echo "this is deploying the code"
+                sh "docker compose up -d "
             }
-            
         }
     }
 }
