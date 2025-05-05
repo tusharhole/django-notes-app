@@ -1,7 +1,7 @@
 @Library ("Shared") _
 pipeline{
     agent {label 'Advika'}
-    
+    stages{
      stage("Code"){
             steps{
                 echo "this is clong the code"
@@ -44,3 +44,4 @@ pipeline{
         }
     }
 }
+
